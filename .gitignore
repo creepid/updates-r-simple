@@ -4,3 +4,4 @@
 out/
 .gradle/
 build/
+/.nb-gradle/private/

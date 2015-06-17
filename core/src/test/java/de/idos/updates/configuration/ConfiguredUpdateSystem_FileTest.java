@@ -60,7 +60,7 @@ public class ConfiguredUpdateSystem_FileTest {
 
   @Test
   public void canOverrideUnknownInstalledVersion() throws Exception {
-    NumericVersion overriddenVersion = new NumericVersion(4, 2, 2);
+    NumericVersion overriddenVersion = new NumericVersion(5, 0, 4);
     UpdateSystem updateSystem = ConfiguredUpdateSystem.loadProperties().andIfTheInstalledVersionIsUnknownUse(overriddenVersion).create();
     Updater updater = getUpdaterThatHasRun(updateSystem);
     Version installedVersion = updater.getInstalledVersion();

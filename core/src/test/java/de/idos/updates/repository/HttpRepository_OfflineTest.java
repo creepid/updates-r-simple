@@ -24,33 +24,33 @@ import static org.mockito.Mockito.when;
 
 public class HttpRepository_OfflineTest {
 
-  @Rule
-  public TemporaryFolder folder = new TemporaryFolder();
+    @Rule
+    public TemporaryFolder folder = new TemporaryFolder();
 
-  HttpRepository repository = new HttpRepository("http://localhost:8081/");
-  VersionStore store = mock(VersionStore.class);
+    HttpRepository repository = new HttpRepository("http://localhost:8081/");
+    VersionStore store = mock(VersionStore.class);
 
-  @Test
-  public void returnsBaseVersionIfServerIsInaccessible() throws Exception {
-    Version latestVersion = repository.getLatestVersion();
-    assertThat(latestVersion, CoreMatchers.is(VersionFinder.BASE_VERSION));
-  }
+    @Test
+    public void returnsBaseVersionIfServerIsInaccessible() throws Exception {
+        Version latestVersion = repository.getLatestVersion();
+        assertThat(latestVersion, CoreMatchers.is(VersionFinder.BASE_VERSION));
+    }
 
-  @Test(timeout = 5000)
-  public void deletesVersionIfErrorsOccurDuringTransfer() throws Exception {
-    final CountDownLatch countDownLatch = new CountDownLatch(1);
-    NumericVersion version = new NumericVersion(5, 0, 4);
-    Installation installation = mock(Installation.class);
-    doThrow(new RuntimeException()).when(installation).addContent(isA(DataInVersion.class));
-    doAnswer(new Answer() {
-      @Override
-      public Object answer(InvocationOnMock invocation) throws Throwable {
-        countDownLatch.countDown();
-        return null;
-      }
-    }).when(installation).abort();
-    when(store.beginInstallation(version)).thenReturn(installation);
-    repository.transferVersionTo(version, store);
-    countDownLatch.await();
-  }
+    @Test(timeout = 5000)
+    public void deletesVersionIfErrorsOccurDuringTransfer() throws Exception {
+        final CountDownLatch countDownLatch = new CountDownLatch(1);
+        NumericVersion version = new NumericVersion(5, 0, 4);
+        Installation installation = mock(Installation.class);
+        doThrow(new RuntimeException()).when(installation).addContent(isA(DataInVersion.class));
+        doAnswer(new Answer() {
+            @Override
+            public Object answer(InvocationOnMock invocation) throws Throwable {
+                countDownLatch.countDown();
+                return null;
+            }
+        }).when(installation).abort();
+        when(store.beginInstallation(version)).thenReturn(installation);
+        repository.transferVersionTo(version, store);
+        countDownLatch.await();
+    }
 }

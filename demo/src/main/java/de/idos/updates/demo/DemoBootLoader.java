@@ -1,6 +1,7 @@
 package de.idos.updates.demo;
 
 import de.idos.updates.UpdateSystem;
+import de.idos.updates.Updater;
 import de.idos.updates.configuration.ConfiguredUpdateSystem;
 import net.sf.anathema.ApplicationLauncher;
 
@@ -18,7 +19,11 @@ public class DemoBootLoader {
     else{
       UpdateSystem updateSystem = ConfiguredUpdateSystem.loadProperties().create();
       updateSystem.reportAllProgressTo(new ConsoleReport());
-      updateSystem.checkForUpdates().updateToLatestVersion();
+      
+      Updater updater = updateSystem.checkForUpdates();
+      updater.runCheck();
+      updater.updateToLatestVersion();
+      
       File versionFolder = updateSystem.getFolderForVersionToRun();
       ApplicationLauncher.loadFromFolder(versionFolder).launch(MAIN_CLASS, MAIN_METHOD);
     }
