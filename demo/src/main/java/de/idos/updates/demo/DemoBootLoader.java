@@ -24,6 +24,8 @@ public class DemoBootLoader {
       updater.runCheck();
       updater.updateToLatestVersion();
       
+      
+      
       File versionFolder = updateSystem.getFolderForVersionToRun();
       ApplicationLauncher.loadFromFolder(versionFolder).launch(MAIN_CLASS, MAIN_METHOD);
     }
