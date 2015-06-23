@@ -22,6 +22,6 @@ public class UrlDataInVersion implements DataInVersion{
     @Override
     public void storeIn(File versionFolder) {
         InputStreamFactory factory = new UrlStreamFactory(url);
-        dataImport.takeDataFromFactory(factory).andStoreThemIn(versionFolder, filename);
+            dataImport.takeDataFromFactory(factory).andStoreThemIn(versionFolder, filename);
     }
 }

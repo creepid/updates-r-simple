@@ -6,7 +6,7 @@ public class DefaultUpdateConnection implements UpdateConnection {
   private final VersionDiscovery installedDiscovery;
   private final VersionDiscovery availableDiscovery;
 
-  public DefaultUpdateConnection(VersionDiscovery installedDiscovery,
+ public DefaultUpdateConnection(VersionDiscovery installedDiscovery,
                                  VersionDiscovery availableDiscovery, VersionInstaller versionInstaller) {
     this.installedDiscovery = installedDiscovery;
     this.availableDiscovery = availableDiscovery;
