@@ -20,6 +20,12 @@ import org.apache.commons.net.ftp.FTPFile;
  */
 public class FtpRepository extends AbstractRepository<FTPFile> {
 
+    private static final String DEFAULT_LOGIN = "anonymous";
+    private static final String DEFAULT_WORKING_DIR = "/availableVersions";
+
+    private String login = DEFAULT_LOGIN;
+    private String workingDir = DEFAULT_WORKING_DIR;
+
     private InetAddress inetAddress;
 
     public FtpRepository(String address) {
@@ -32,12 +38,20 @@ public class FtpRepository extends AbstractRepository<FTPFile> {
 
     @Override
     protected InstallationStrategy<FTPFile> createInstallationStrategy(Installation installation) {
-        return new FtpFileInstaller(getReport(), inetAddress, installation);
+        return new FtpFileInstaller(getReport(), inetAddress, installation, login, workingDir);
     }
 
     @Override
     protected LookupStrategy createLookup() {
-        return new FtpLookup(inetAddress);
+        return new FtpLookup(inetAddress, login, workingDir);
+    }
+
+    public void setLogin(String login) {
+        this.login = login;
+    }
+
+    public void setWorkingDir(String workingDir) {
+        this.workingDir = workingDir;
     }
 
 }

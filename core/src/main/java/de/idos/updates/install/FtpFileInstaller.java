@@ -24,6 +24,9 @@ import org.apache.commons.net.ftp.FTPFile;
  */
 public class FtpFileInstaller implements InstallationStrategy<FTPFile> {
 
+    private final String workingDir;
+    private final String login;
+
     private ProgressReport report;
     private FTPClient ftpClient;
     private Installation installation;
@@ -33,16 +36,32 @@ public class FtpFileInstaller implements InstallationStrategy<FTPFile> {
             ftpClient = new FTPClient();
             ftpClient.connect(inetAddress);
             ftpClient.enterLocalPassiveMode();
+
+            if (login != null) {
+                ftpClient.login(login, null);
+            }
+
+            if (workingDir != null) {
+                ftpClient.changeWorkingDirectory(workingDir);
+            }
+
         } catch (IOException ex) {
             report.versionLookupFailed(ex);
             ftpClient = null;
         }
     }
 
-    public FtpFileInstaller(ProgressReport report, InetAddress inetAddress, Installation installation) {
+    public FtpFileInstaller(ProgressReport report, InetAddress inetAddress, Installation installation,
+            String login, String workingDir) {
         this.report = report;
         this.installation = installation;
+        this.login = login;
+        this.workingDir = workingDir;
         connect(inetAddress);
+    }
+
+    public FtpFileInstaller(ProgressReport report, InetAddress inetAddress, Installation installation) {
+        this(report, inetAddress, installation, null, null);
     }
 
     @Override
@@ -50,8 +69,9 @@ public class FtpFileInstaller implements InstallationStrategy<FTPFile> {
         if (ftpClient == null) {
             return Collections.EMPTY_LIST;
         }
-
+        ftpClient.changeWorkingDirectory(version.asString());
         FTPFile[] ftpFiles = ftpClient.listFiles();
+        ftpClient.changeToParentDirectory();
         return Arrays.asList(ftpFiles);
     }
 
@@ -60,10 +80,12 @@ public class FtpFileInstaller implements InstallationStrategy<FTPFile> {
         if (ftpClient == null) {
             return;
         }
+        ftpClient.changeWorkingDirectory(version.asString());
         report.installingFile(element.getName());
         DataImport dataImport = new DataImport().reportProgressTo(report);
         FtpFileDataInVersion dataInVersion = new FtpFileDataInVersion(ftpClient, element, dataImport);
         installation.addContent(dataInVersion);
+        ftpClient.changeToParentDirectory();
     }
 
     @Override

@@ -51,3 +51,9 @@ Feature: Updates-R-Simple discovers and downloads updates
         When the application requests an update that takes a while to complete
         And the application asks the library to abort the update
         Then no trace of the update remains
+
+    Scenario: Updates-R-Simple supports FTP-Repositories
+        Given an FTP-server with new versions
+        And a FTP-repository for that server
+        When the application checks for updates
+        Then the library reports an update

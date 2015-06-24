@@ -23,13 +23,20 @@ import org.apache.commons.net.ftp.FTPFile;
  */
 public class FtpLookup implements LookupStrategy {
 
-    private static final String DEFAULT_LOGIN = "anonymous";
-    private String login = DEFAULT_LOGIN;
+    private final String workingDir;
+    private final String login;
 
     private InetAddress inetAddress;
 
     public FtpLookup(InetAddress inetAddress) {
+        this(inetAddress, null, null);
+    }
+
+    public FtpLookup(InetAddress inetAddress, String login, String workingDir) {
         this.inetAddress = inetAddress;
+        this.login = login;
+        this.workingDir = workingDir;
+
     }
 
     @Override
@@ -43,9 +50,13 @@ public class FtpLookup implements LookupStrategy {
         ftpClient.connect(inetAddress);
         ftpClient.enterLocalPassiveMode();
 
-        ftpClient.login(login, null);
-        
-        ftpClient.changeWorkingDirectory("/availableVersions");
+        if (login != null) {
+            ftpClient.login(login, null);
+        }
+
+        if (workingDir != null) {
+            ftpClient.changeWorkingDirectory(workingDir);
+        }
 
         FTPFile[] availableVersionsDirs = ftpClient.listDirectories();
         List<String> strings = new ArrayList<String>();
@@ -55,10 +66,6 @@ public class FtpLookup implements LookupStrategy {
 
         List<Version> versions = new VersionFactory().createVersionsFromStrings(strings);
         return new VersionFinder().findLatestVersion(versions);
-    }
-
-    public void setLogin(String login) {
-        this.login = login;
     }
 
 }
